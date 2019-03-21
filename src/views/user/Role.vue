@@ -149,9 +149,11 @@
 				this.listLoading = true;
 				//NProgress.start();
 				getRoleListPage(para).then((res) => {
-					this.total = res.data.totalCount;
-					this.roles = res.data.list;
-					this.listLoading = false;
+					if (res.data != null) {
+						this.total = res.data.totalCount;
+						this.roles = res.data.list;
+						this.listLoading = false;
+					}
 					//NProgress.done();
 				});
 			},
@@ -246,7 +248,7 @@
 			},
 		},
 		mounted() {
-			this.getUsers();
+			this.getRoles();
 		}
 	}
 
