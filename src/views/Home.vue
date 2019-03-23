@@ -52,13 +52,6 @@
 			</aside>
 			<section class="content-container">
 				<div class="grid-content bg-purple-light">
-					<el-col class="breadcrumb-container">
-						<el-breadcrumb separator=">" class="breadcrumb-inner">
-							<el-breadcrumb-item v-for="item in $route.matched" :key="item.path">
-								{{ item.name }}
-							</el-breadcrumb-item>
-						</el-breadcrumb>
-					</el-col>
 					<el-col class="content-wrapper">
 						<transition name="fade" mode="out-in">
 							<router-view></router-view>
@@ -74,7 +67,7 @@
 	export default {
 		data() {
 			return {
-				sysName:'VUEADMIN',
+				sysName:'权限管理系统',
 				collapsed:false,
 				sysUserName: '',
 				sysUserAvatar: '',

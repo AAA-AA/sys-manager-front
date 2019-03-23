@@ -17,6 +17,10 @@ export default {
         r = null;
         return context == null || context == "" || context == "undefined" ? "" : context;
     },
+    /**格式化带T的时间字符串*/
+    formatDateTime:function (datetime) {
+        return datetime.replace("T", " ");
+    },
     formatDate: {
 
 
