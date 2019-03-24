@@ -20,23 +20,25 @@
       </el-table-column>
       <el-table-column type="index" width="60">
       </el-table-column>
-      <el-table-column prop="name" label="菜单名称" width="120" sortable>
+      <el-table-column prop="name" label="菜单名称" sortable>
       </el-table-column>
-      <el-table-column prop="url" label="菜单url" width="130">
+      <el-table-column prop="url" label="菜单url">
       </el-table-column>
-      <el-table-column prop="type" label="类型" :formatter="formatButton" min-width="180">
+      <el-table-column prop="type" label="类型" :formatter="formatButton">
       </el-table-column>
-      <el-table-column prop="icon" label="图标" min-width="180">
+      <el-table-column prop="icon" label="图标">
       </el-table-column>
-      <el-table-column prop="mark" label="备注" min-width="180">
+      <el-table-column prop="mark" label="备注">
       </el-table-column>
       <el-table-column prop="createTime" :formatter="formatToDateTime" label="创建时间"></el-table-column>
       <el-table-column prop="updateTime" :formatter="formatToDateTime" label="更新时间"></el-table-column>
       
       <el-table-column label="操作" width="150">
         <template scope="scope">
-          <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+          <el-button type="primary" size="small" icon="el-icon-edit" circle
+                     @click="handleEdit(scope.$index, scope.row)"></el-button>
+          <el-button type="danger" size="small" icon="el-icon-delete" circle
+                     @click="handleDel(scope.$index, scope.row)"></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -78,11 +80,11 @@
         <el-form-item label="备注">
           <el-input type="textarea" v-model="editForm.mark"></el-input>
         </el-form-item>
-        <el-form-item>
-          <el-button @click.native="editFormVisible = false">取消</el-button>
-          <el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
-        </el-form-item>
       </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click.native="editFormVisible = false">取消</el-button>
+        <el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
+      </div>
     </el-dialog>
     
     <el-dialog title="新增"
@@ -112,11 +114,11 @@
         <el-form-item label="备注">
           <el-input type="textarea" v-model="addForm.mark"></el-input>
         </el-form-item>
-        <el-form-item>
-          <el-button @click.native="addFormVisible = false">取消</el-button>
-          <el-button type="primary" @click.native="addSubmit" :loading="addLoading">提交</el-button>
-        </el-form-item>
       </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click.native="addFormVisible = false">取消</el-button>
+        <el-button type="primary" @click.native="addSubmit" :loading="addLoading">提交</el-button>
+      </div>
     </el-dialog>
   </section>
 
