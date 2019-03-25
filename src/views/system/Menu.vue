@@ -26,7 +26,10 @@
       </el-table-column>
       <el-table-column prop="type" label="类型" :formatter="formatButton">
       </el-table-column>
-      <el-table-column prop="icon" label="图标">
+      <el-table-column label="图标">
+        <template scope="scope" >
+          <i :class="scope.row.icon"></i>
+        </template>
       </el-table-column>
       <el-table-column prop="mark" label="备注">
       </el-table-column>

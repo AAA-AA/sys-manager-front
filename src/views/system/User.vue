@@ -18,22 +18,36 @@
     <!--列表-->
     <el-table :data="users" highlight-current-row v-loading="listLoading" @selection-change="selsChange"
               style="width: 100%;">
-      <el-table-column type="selection" width="55">
+      <el-table-column type="selection" width="55"/>
+      <el-table-column type="index" width="60"/>
+      <el-table-column label="姓名">
+        <template slot-scope="scope">
+          <el-popover trigger="hover" placement="top">
+            <p>姓名: {{ scope.row.name }}</p>
+            <p>住址: {{ scope.row.address }}</p>
+            <div slot="reference" class="name-wrapper">
+              <el-tag size="medium">{{ scope.row.name }}</el-tag>
+            </div>
+          </el-popover>
+        </template>
       </el-table-column>
-      <el-table-column type="index" width="60">
+      <el-table-column prop="sex" label="性别"  :formatter="formatSex" sortable/>
+      <el-table-column prop="age" label="年龄"  sortable/>
+      <el-table-column prop="birth" label="生日" width="120" :formatter="formatBirthDate"/>
+      
+      <el-table-column label="角色" min-width="100">
+        <template scope="scope">
+          <el-tag
+                  type="success"
+                  size="mini"
+                  :key="role"
+                  v-for="role in scope.row.roles"
+                  :disable-transitions="false">{{role}}
+          </el-tag>
+        </template>
       </el-table-column>
-      <el-table-column prop="name" label="姓名" width="120" sortable>
-      </el-table-column>
-      <el-table-column prop="sex" label="性别" width="100" :formatter="formatSex" sortable>
-      </el-table-column>
-      <el-table-column prop="age" label="年龄" width="100" sortable>
-      </el-table-column>
-      <el-table-column prop="birth" label="生日" width="120" :formatter="formatBirthDate" sortable>
-      </el-table-column>
-      <el-table-column prop="address" label="地址" min-width="180" sortable>
-      </el-table-column>
-      <el-table-column prop="createTime" :formatter="formatToDateTime" label="创建时间"></el-table-column>
-      <el-table-column prop="updateTime" :formatter="formatToDateTime" label="更新时间"></el-table-column>
+      <el-table-column prop="createTime" :formatter="formatToDateTime" label="创建时间"/>
+      <el-table-column prop="updateTime" :formatter="formatToDateTime" label="更新时间"/>
       <el-table-column label="操作" width="150">
         <template scope="scope">
           <el-button type="primary" size="small" icon="el-icon-edit" circle @click="handleEdit(scope.$index, scope.row)"></el-button>
