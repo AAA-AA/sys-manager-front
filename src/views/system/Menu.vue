@@ -22,12 +22,13 @@
       </el-table-column>
       <el-table-column prop="name" label="菜单名称" sortable>
       </el-table-column>
+      <el-table-column prop="parentMenuName" label="父级菜单名称"/>
       <el-table-column prop="url" label="菜单url">
       </el-table-column>
       <el-table-column prop="type" label="类型" :formatter="formatButton">
       </el-table-column>
       <el-table-column label="图标">
-        <template scope="scope" >
+        <template scope="scope">
           <i :class="scope.row.icon"></i>
         </template>
       </el-table-column>
@@ -57,33 +58,7 @@
                width="30%"
                :visible.sync="editFormVisible"
                :close-on-click-modal="false">
-      <el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
-        <el-form-item label="id" prop="id" v-show="false">
-          <el-input v-model="editForm.id"></el-input>
-        </el-form-item>
-        <el-form-item label="菜单名称" prop="name">
-          <el-input v-model="editForm.name" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="菜单url">
-          <el-input v-model="editForm.url"></el-input>
-        </el-form-item>
-        <el-form-item label="上级菜单">
-          <el-input v-model="editForm.parentId" v-show="false"></el-input>
-          <el-input v-model="editForm.parentMenuName"></el-input>
-        </el-form-item>
-        <el-form-item label="菜单类型">
-          <el-radio-group v-model="editForm.type">
-            <el-radio :label="1">菜单</el-radio>
-            <el-radio :label="2">按钮</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="图标">
-          <el-input v-model="editForm.icon"></el-input>
-        </el-form-item>
-        <el-form-item label="备注">
-          <el-input type="textarea" v-model="editForm.mark"></el-input>
-        </el-form-item>
-      </el-form>
+      <edit-menu ref="editForm" :form="editForm"></edit-menu>
       <div slot="footer" class="dialog-footer">
         <el-button @click.native="editFormVisible = false">取消</el-button>
         <el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
@@ -94,30 +69,7 @@
                :visible.sync="addFormVisible"
                :close-on-click-modal="false"
                width="30%">
-      <el-form :model="addForm" label-width="20%" :rules="addFormRules" ref="addForm">
-        <el-form-item label="菜单名称" prop="name">
-          <el-input v-model="addForm.name" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="菜单url">
-          <el-input v-model="addForm.url"></el-input>
-        </el-form-item>
-        <el-form-item label="上级菜单">
-          <el-input v-model="addForm.parentId" v-show="false"></el-input>
-          <el-input v-model="addForm.parentMenuName"></el-input>
-        </el-form-item>
-        <el-form-item label="菜单类型">
-          <el-radio-group v-model="addForm.type">
-            <el-radio label="1">菜单</el-radio>
-            <el-radio label="2">按钮</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="图标">
-          <el-input v-model="addForm.icon"></el-input>
-        </el-form-item>
-        <el-form-item label="备注">
-          <el-input type="textarea" v-model="addForm.mark"></el-input>
-        </el-form-item>
-      </el-form>
+      <add-menu ref="addForm" :form="addForm"></add-menu>
       <div slot="footer" class="dialog-footer">
         <el-button @click.native="addFormVisible = false">取消</el-button>
         <el-button type="primary" @click.native="addSubmit" :loading="addLoading">提交</el-button>
@@ -127,184 +79,184 @@
 
 </template>
 <script>
-  import util from '../../common/js/util'
-  //import NProgress from 'nprogress'
-  import {getMenuListPage, removeMenu, updateMenu, addMenu} from '../../api/api';
+	import util from '../../common/js/util'
+	//import NProgress from 'nprogress'
+	import {getMenuListPage, removeMenu, updateMenu, addMenu} from '../../api/api';
+	import EditMenu from "./EditMenu";
+	import AddMenu from "./AddMenu";
 
-  export default {
-    data() {
-      return {
-        filters: {
-          name: ''
-        },
-        menus: [],
-        total: 0,
-        pageSize: 5,
-        pageNum: 1,
-        listLoading: false,
-        sels: [],//列表选中列
+	export default {
+		components: {AddMenu, EditMenu},
+		data() {
+			return {
+				filters: {
+					name: ''
+				},
+				menus: [],
+				total: 0,
+				pageSize: 5,
+				pageNum: 1,
+				listLoading: false,
+				sels: [],//列表选中列
 
-        editFormVisible: false,//编辑界面是否显示
-        editLoading: false,
-        editFormRules: {
-          name: [
-            {required: true, message: '请输入角色名称', trigger: 'blur'}
-          ]
-        },
-        //编辑界面数据
-        editForm: {
-          id: 0,
-          name: '',
-          url: '',
-          type: '',
-          icon: '',
-          mark: ''
-        },
+				editFormVisible: false,//编辑界面是否显示
+				editLoading: false,
+				editFormRules: {
+					name: [
+						{required: true, message: '请输入角色名称', trigger: 'blur'}
+					]
+				},
+				editTreeData: [],
+				//编辑界面数据
+				editForm: {
+					id: 0,
+					name: '',
+					url: '',
+					type: '',
+					icon: '',
+					mark: '',
+					parentId: '',
+					parentMenuName: '',
+				},
 
-        addFormVisible: false,//新增界面是否显示
-        addLoading: false,
-        addFormRules: {
-          name: [
-            {required: true, message: '请输入名称', trigger: 'blur'}
-          ]
-        },
-        //新增界面数据
-        addForm: {
-          name: '',
-          url: '',
-          type: '',
-          icon: '',
-          mark: ''
-        }
+				addFormVisible: false,//新增界面是否显示
+				addLoading: false,
+				//新增界面数据
+				addForm: {
+					name: '',
+					url: '',
+					type: '',
+					icon: '',
+					mark: '',
+					parentId: '',
+					parentMenuName: '',
+				}
 
-      }
-    },
-    methods: {
-      formatButton: function (row, column) {
-        return row.type == 1 ? '菜单' : row.type == 2 ? '按钮' : '未知';
-      },
-      formatToDateTime: function (row, column) {
-        if (column.property == 'updateTime') {
-          return util.formatDateTime(row.updateTime);
-        }
+			}
+		},
+		methods: {
+			formatButton: function (row, column) {
+				return row.type == 1 ? '菜单' : row.type == 2 ? '按钮' : '未知';
+			},
+			formatToDateTime: function (row, column) {
+				if (column.property == 'updateTime') {
+					return util.formatDateTime(row.updateTime);
+				}
 
-        if (column.property == 'createTime') {
-          return util.formatDateTime(row.createTime)
-        }
-      },
-      handleCurrentChange(val) {
-        this.pageNum = val;
-        this.getRoles();
-      },
-      //获取用户列表
-      getMenus() {
-        let para = {
-          pageNum: this.pageNum,
-          pageSize: this.pageSize,
-          name: this.filters.name
-        };
-        this.listLoading = true;
-        //NProgress.start();
-        getMenuListPage(para).then((res) => {
-          if (res.data != null) {
-            this.total = res.data.totalCount;
-            this.menus = res.data.list;
-          }
-          this.listLoading = false;
-          //NProgress.done();
-        });
-      },
-      //删除
-      handleDel: function (index, row) {
-        this.$confirm('确认删除该记录吗?', '提示', {
-          type: 'warning'
-        }).then(() => {
-          this.listLoading = true;
-          //NProgress.start();
-          let para = {id: row.id};
-          removeMenu(para).then((res) => {
-            this.listLoading = false;
-            //NProgress.done();
-            this.$message({
-              message: '删除成功',
-              type: 'success'
-            });
-            this.getMenus();
-          });
-        }).catch(() => {
+				if (column.property == 'createTime') {
+					return util.formatDateTime(row.createTime)
+				}
+			},
+			handleCurrentChange(val) {
+				this.pageNum = val;
+				this.getMenus();
+			},
+			//获取菜单列表
+			getMenus() {
+				let para = {
+					pageNum: this.pageNum,
+					pageSize: this.pageSize,
+					name: this.filters.name
+				};
+				this.listLoading = true;
+				//NProgress.start();
+				getMenuListPage(para).then((res) => {
+					if (res.data != null) {
+						this.total = res.data.totalCount;
+						this.menus = res.data.list;
+					}
+					this.listLoading = false;
+					//NProgress.done();
+				});
+			},
+			//删除
+			handleDel: function (index, row) {
+				this.$confirm('确认删除该记录吗?', '提示', {
+					type: 'warning'
+				}).then(() => {
+					this.listLoading = true;
+					//NProgress.start();
+					let para = {id: row.id};
+					removeMenu(para).then((res) => {
+						this.listLoading = false;
+						//NProgress.done();
+						this.$message({
+							message: '删除成功',
+							type: 'success'
+						});
+						this.getMenus();
+					});
+				}).catch(() => {
 
-        });
-      },
-      //显示编辑界面
-      handleEdit: function (index, row) {
-        this.editFormVisible = true;
-        this.editForm = Object.assign({}, row);
-      },
-      //显示新增界面
-      handleAdd: function () {
-        this.addFormVisible = true;
-        this.addForm = {
-          name: '',
-          url: '',
-          type: '',
-          icon: '',
-          mark: ''
-        };
-      },
-      //编辑
-      editSubmit: function () {
-        this.$refs.editForm.validate((valid) => {
-          if (valid) {
-            this.$confirm('确认提交吗？', '提示', {}).then(() => {
-              this.editLoading = true;
-              //NProgress.start();
-              let para = Object.assign({}, this.editForm);
-              updateMenu(para).then((res) => {
-                this.editLoading = false;
-                //NProgress.done();
-                this.$message({
-                  message: '提交成功',
-                  type: 'success'
-                });
-                this.$refs['editForm'].resetFields();
-                this.editFormVisible = false;
-                this.getRoles();
-              });
-            });
-          }
-        });
-      },
-      //新增
-      addSubmit: function () {
-        this.$refs.addForm.validate((valid) => {
-          if (valid) {
-            this.$confirm('确认提交吗？', '提示', {}).then(() => {
-              this.addLoading = true;
-              //NProgress.start();
-              let para = Object.assign({}, this.addForm);
-              addMenu(para).then((res) => {
-                this.addLoading = false;
-                //NProgress.done();
-                this.$message({
-                  message: '提交成功',
-                  type: 'success'
-                });
-                this.$refs['addForm'].resetFields();
-                this.addFormVisible = false;
-                this.getMenus();
-              });
-            });
-          }
-        });
-      },
-      selsChange: function (sels) {
-        this.sels = sels;
-      },
-    },
-    mounted() {
-      this.getMenus();
-    }
-  }
+				});
+			},
+			//显示编辑界面
+			handleEdit: function (index, row) {
+				this.editFormVisible = true;
+				this.editForm = Object.assign({}, row);
+			},
+			//显示新增界面
+			handleAdd: function () {
+				this.addFormVisible = true;
+				this.addForm = {
+					name: '',
+					url: '',
+					type: '',
+					icon: '',
+					mark: '',
+					parentMenuName: '',
+				};
+			},
+			//编辑
+			editSubmit: function () {
+				this.$refs.editForm.validate((valid) => {
+					if (valid) {
+						this.$confirm('确认提交吗？', '提示', {}).then(() => {
+							this.editLoading = true;
+							//NProgress.start();
+							let para = Object.assign({}, this.editForm);
+							updateMenu(para).then((res) => {
+								this.editLoading = false;
+								//NProgress.done();
+								this.$message({
+									message: '提交成功',
+									type: 'success'
+								});
+								this.$refs['editForm'].resetFields();
+								this.editFormVisible = false;
+								this.getMenus();
+							});
+						});
+					}
+				});
+			},
+			//新增
+			addSubmit: function () {
+				this.$confirm('确认提交吗？', '提示', {}).then(() => {
+					this.addLoading = true;
+					//NProgress.start();
+					let para = Object.assign({}, this.addForm);
+					addMenu(para).then((res) => {
+						this.addLoading = false;
+						//NProgress.done();
+						this.$message({
+							message: '提交成功',
+							type: 'success'
+						});
+						this.$refs['addForm'].resetFields();
+						this.addFormVisible = false;
+						this.getMenus();
+					});
+				});
+			},
+			selsChange: function (sels) {
+				this.sels = sels;
+			},
+		},
+		mounted() {
+			this.getMenus();
+		}
+	}
 </script>
 
 <style scoped>

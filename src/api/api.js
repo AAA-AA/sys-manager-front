@@ -34,6 +34,9 @@ export const addRole = params => { return axios.post(`${base}/${role}/add`, para
 
 /**角色管理相关接口**/
 let menu = "menu";
+
+export const selectMenuTree = params => { return axios.get(`${base}/${menu}/selectMenuTree`, { params: params }); };
+
 export const getMenuList = params => { return axios.get(`${base}/${menu}/getAll`, { params: params }); };
 
 export const getMenuListPage = params => { return axios.post(`${base}/${menu}/list`, params).then(res => res.data); };
