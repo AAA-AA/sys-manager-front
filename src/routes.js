@@ -4,11 +4,12 @@ import Home from './views/Home.vue'
 import Main from './views/Main.vue'
 import User from './views/system/User.vue'
 import Role from './views/system/Role.vue'
-import Menu from './views/system/Menu.vue'
+import Menu from './views/system/menu/Menu.vue'
 import Page4 from './views/nav2/Page4.vue'
 import Page5 from './views/nav2/Page5.vue'
 import Page6 from './views/nav3/Page6.vue'
 import echarts from './views/charts/echarts.vue'
+import Father from "./views/nav2/Father";
 
 let routes = [
   {
@@ -45,7 +46,8 @@ let routes = [
     iconCls: 'fa fa-id-card-o',
     children: [
       {path: '/page4', component: Page4, name: '页面4'},
-      {path: '/page5', component: Page5, name: '页面5'}
+      {path: '/page5', component: Page5, name: '页面5'},
+      {path: '/father', component: Father, name: '父子组件测试'}
     ]
   },
   {

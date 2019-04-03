@@ -26,8 +26,8 @@
 </template>
 
 <script>
-	import selectMenu from "./selectMenu";
-	import {selectMenuTree} from '../../api/api';
+	import selectMenu from "../SelectMenu";
+	import {selectMenuTree} from '../../../api/api';
 	
 	export default {
 		name: "AddMenu",

@@ -100,7 +100,15 @@
                :close-on-click-modal="false"
                width="30%">
       <el-form :model="bindMenuForm" label-width="80px" ref="bindMenuForm">
-      
+        <el-tree
+                :data="treeData"
+                show-checkbox
+                default-expand-all
+                node-key="id"
+                ref="tree"
+                highlight-current
+                :props="defaultProps">
+        </el-tree>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click.native="bindMenuVisible = false">取消</el-button>

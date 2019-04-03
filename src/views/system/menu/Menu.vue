@@ -79,9 +79,9 @@
 
 </template>
 <script>
-	import util from '../../common/js/util'
+	import util from '../../../common/js/util'
 	//import NProgress from 'nprogress'
-	import {getMenuListPage, removeMenu, updateMenu, addMenu} from '../../api/api';
+	import {getMenuListPage, removeMenu, updateMenu, addMenu} from '../../../api/api';
 	import EditMenu from "./EditMenu";
 	import AddMenu from "./AddMenu";
 

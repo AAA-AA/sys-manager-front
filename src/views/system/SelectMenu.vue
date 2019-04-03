@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-input v-if="false" v-model="value"/>
+    <el-input v-if="false" :value="value"/>
     <el-popover placement="right" width="260" trigger="click">
       <el-input placeholder="请选择上级菜单" v-model="parentMenuName" slot="reference" readonly="readonly"></el-input>
       <el-tree empty-text="暂无数据"
@@ -13,7 +13,7 @@
                node-key="id">
         <div class="associate-personnel" slot-scope="{ node, data }">
           <i class="el-icon-menu"></i>
-          <span>{{ data.label }}</span>
+          <span>{{ data.name }}</span>
           <div class="associate-personnel-edit">
             <em><span v-show="!data.type ">{{ data.name }}</span></em>
           </div>
